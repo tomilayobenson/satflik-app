@@ -18,8 +18,15 @@ export const fetchAllGenres = createAsyncThunk(
 
 const allGenresSlice = CreateSlice({
     name:'allGenres',
-    initialState:{isLoading: true, errMsg: null, popularMoviesArray:[]},
-    reducers: {},
+    initialState:{isLoading: true, errMsg: null, allGenresArray:[], selectedGenresArray:[]},
+    reducers: {
+        addCategory: (state, action) => {
+            state.selectedGenresArray = [...state.selectedGenresArray, action.payload]
+        },
+        removeCategory: (state,action) => {
+            state.selectedGenresArray = state.selectedGenresArray.filter(genre => genre !== action.payload)
+        }
+    },
     extraReducers: {
         [fetchAllGenres.pending]: (state) => {
             state.isLoading = true;
@@ -27,7 +34,7 @@ const allGenresSlice = CreateSlice({
         [fetchAllGenres.fulfilled]: (state,action) => {
             state.isLoading = false;
             state.errMsg = null;
-            state.popularMoviesArray = action.payload.genres
+            state.allGenresArray = action.payload.genres
         },
         [fetchAllGenres.rejected]: (state, action) => {
             state.isLoading = false;
@@ -39,3 +46,4 @@ const allGenresSlice = CreateSlice({
 
 })
 export const allGenresReducers = allGenresSlice.reducer;
+export const {addCategory, removeCategory} = allGenresSlice.actions;
