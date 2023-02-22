@@ -42,7 +42,7 @@ const popularMoviesNavigator = () => {
                 name='MovieDetails'
                 component={MovieDetailsScreen}
                 options={({ route }) => ({
-                    title: route.params.movie.title
+                    title: route.params.movieTitle
                 })
 
                 }

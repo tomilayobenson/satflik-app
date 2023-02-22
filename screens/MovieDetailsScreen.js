@@ -1,17 +1,28 @@
 import { useEffect, useState } from "react";
-import { View, Linking } from "react-native";
+import { View, Linking, ScrollView } from "react-native";
 import { baseUrl, imageUrl } from "../data/baseUrl";
-import { Card, Text, Rating } from "react-native-elements";
+import { Card, Text, Rating, Image } from "react-native-elements";
 import { FlatList } from "react-native";
 
 
 const MovieDetailsScreen = ({ route }) => {
-    const movie = route.params.movie
+    const movieId = route.params.movieId
     const [reviews, setReviews] = useState([])
+    const [movie, setMovie] = useState({})
+
 
     useEffect(() => {
+        async function getDetails() {
+            const response = await fetch(baseUrl + movieId + "?api_key=3341385410c37095575e1b97197378ce");
+            if (!response.ok) throw Error(response.message);
+            const data = await response.json();
+            setMovie(data);
+        }
+        getDetails();
+    }, []);
+    useEffect(() => {
         async function getReviews() {
-            const response = await fetch(baseUrl + movie.id + "/reviews?api_key=3341385410c37095575e1b97197378ce");
+            const response = await fetch(baseUrl + movieId + "/reviews?api_key=3341385410c37095575e1b97197378ce");
             if (!response.ok) throw Error(response.message);
             const data = await response.json();
             setReviews(data.results);
@@ -21,7 +32,8 @@ const MovieDetailsScreen = ({ route }) => {
 
     const ContentCard = ({ movie }) => {
         return (
-            <Card>
+            <>
+<Card>
                 <Card.Image
                     style={{ padding: 0 }}
                     source={{
@@ -35,48 +47,62 @@ const MovieDetailsScreen = ({ route }) => {
                 <Text>Adult Movie?: {movie.adult ? "Yes" : "No"}</Text>
                 <Text>Runtime: {movie.runtime}mins</Text>
                 <Text>Budget: ${movie.budget}</Text>
-                <FlatList
-                    data={movie}
-                    renderItem={(item) => <Text>{item.name}</Text>}
-                    keyExtractor={item => item.id.toString()}
-                />
-                <Text style={{ color: 'blue' }}
-                    onPress={() => Linking.openURL(movie.homepage)}>
+                <Text
+                    style={{ color: 'blue' }}
+                    onPress={() => Linking.openURL(movie.homepage)}
+                >
                     Get Tickets
                 </Text>
             </Card>
+            <Text style={{marginLeft:15, marginTop:30, fontSize: 18,fontWeight: 'bold'}}>Movie Reviews</Text>
+            </>
+            
         )
     }
 
-    const MovieReviews = ({ reviews }) => {
+    const reviewCard = ({ item: review }) => {
         const truncate = (str) => str.length > 150 ? str.substring(0, 147) + "..." : str;
         return (
-            reviews.map((review, idx) => {
-                <Card key={idx}>
-                    <Card.Image source={{ uri: review.author_details.avatar_path ? (imageUrl + review.author_details.avatar_path) : "https://images.pexels.com/photos/7129713/pexels-photo-7129713.jpeg" }}>
-                        <View style={{ justifyContent: 'center', flex: 1 }}>
-                            <Text>
-                                {review.author}
-                            </Text>
-                        </View>
-                    </Card.Image>
-                    <Text style={{ margin: 20 }}>{truncate(review.content)}</Text>
-                    <Rating imageSize={10} readonly startingValue={review.author_details.rating} type='star' />;
-                </Card>
-            }
+            <View style={{ margin: 20 }}>
+                <View style={{ flexDirection: 'row', flex: 1}}>
+                    <View style={{ flex: 3 }}>
+                        <Image
+                            source={{ uri: review.author_details.avatar_path ? (imageUrl + review.author_details.avatar_path) : "https://images.pexels.com/photos/7129713/pexels-photo-7129713.jpeg" }}
+                            style={{ height: 50, width: 50, borderRadius: 999 }}
+                        />
+                        <Text style={{ fontSize: 12, marginRight:20 }}>{`-- ${review.author}`}</Text>
+                    </View>
+                    <View style={{ flex: 7 }}>
+                        <Text style={{ fontSize: 14 }}>{truncate(review.content)}</Text>
+                    </View>
+                </View>
+                <View style={{ flexDirection: 'row', flex: 1, justifyContent:'flex-start' }}>
+                    
+                    <Rating imageSize={15} readonly startingValue={review.author_details.rating} type='star' />
 
-            )
+                </View>
+
+            </View>
+        )
+    }
+    const MovieReviews = ({ reviews }) => {
+        return (
+            <FlatList
+                data={reviews}
+                renderItem={reviewCard}
+                keyExtractor={item => item.id.toString()}
+                contentContainerStyle={{ marginHorizontal: 20, paddingVertical: 20 }}
+                ListHeaderComponent={<ContentCard movie={movie} />}
+            />
+
         )
     }
 
     return (
         <View style={{ flex: 1 }}>
-            <View style={{ flex: 1 }}>
-                <ContentCard movie={movie} />
-            </View>
-            <View style={{ flex: 2 }}>
-                <MovieReviews reviews={reviews} />
-            </View>
+            
+            <MovieReviews reviews={reviews} />
+
         </View>
     )
 }

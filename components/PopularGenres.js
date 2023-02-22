@@ -11,7 +11,8 @@ const PopularGenres = ({ setCategorizedMovies }) => {
     const allGenres = useSelector((state) => state.allGenres)
     const dispatch = useDispatch()
     const handleCheck = ({ target }) => {
-        const { checked, id } = target
+        const { checked, title, id } = target
+        console.log (`${checked} ${id} ${title}`)
         if (checked) {
             dispatch(addCategory(id))
         } else {
@@ -51,15 +52,13 @@ const PopularGenres = ({ setCategorizedMovies }) => {
     }, [allGenres])
 
     return (
-        <View style={{ flex: 1 }}>
-            <Text>Genres</Text>
+            
             <FlatList
                 data={genres}
                 renderItem={({ item: genre }) => <CheckBox title={genre.name} id={genre.id} onPress={handleCheck} />}
                 keyExtractor={item => item.id}
             />
-            <Text>Genres</Text>
-        </View>
+
 
     )
 }
