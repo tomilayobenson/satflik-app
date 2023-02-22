@@ -1,4 +1,4 @@
-import { CreateSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { baseUrl } from "./baseUrl";
 
 export const fetchPopularMovies = createAsyncThunk(
@@ -16,7 +16,7 @@ export const fetchPopularMovies = createAsyncThunk(
     }
 )
 
-const popularMoviesSlice = CreateSlice({
+const popularMoviesSlice = createSlice({
     name:'popularMovies',
     initialState:{isLoading: true, errMsg: null, popularMoviesArray:[]},
     reducers: {},

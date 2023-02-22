@@ -8,6 +8,8 @@ import MovieDetailsScreen from './MovieDetailsScreen'
 import { useDispatch } from 'react-redux'
 import { fetchAllGenres } from '../data/allGenresSlice'
 import { fetchPopularMovies } from '../data/popularMoviesSlice'
+import Constants from 'expo-constants';
+import logo from '../assets/satLogoOrange.png';
 
 const drawer = createDrawerNavigator()
 const screenOptions = {
@@ -37,7 +39,7 @@ const popularMoviesNavigator = () => {
                 }
             />
             <stack.Screen
-                name='Movie Details'
+                name='MovieDetails'
                 component={MovieDetailsScreen}
                 options={({ route }) => ({
                     title: route.params.movie.title
@@ -66,8 +68,8 @@ const CustomDrawerContent = (props) => (
 const MainScreen = () => {
     const dispatch = useDispatch()
     useEffect(() => {
-        dispatch(fetchAllGenres)
-        dispatch(fetchPopularMovies)
+        dispatch(fetchAllGenres())
+        dispatch(fetchPopularMovies())
     }, [dispatch])
     return (
         <View style={{

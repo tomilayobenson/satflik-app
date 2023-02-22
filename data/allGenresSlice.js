@@ -1,4 +1,4 @@
-import { CreateSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { baseUrl } from "./baseUrl";
 
 export const fetchAllGenres = createAsyncThunk(
@@ -16,7 +16,7 @@ export const fetchAllGenres = createAsyncThunk(
     }
 )
 
-const allGenresSlice = CreateSlice({
+const allGenresSlice = createSlice({
     name:'allGenres',
     initialState:{isLoading: true, errMsg: null, allGenresArray:[], selectedGenresArray:[]},
     reducers: {
